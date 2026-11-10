@@ -1,68 +1,67 @@
-# Block Breaker: Perubahan dari Kode Awal ke Versi Akhir
+# Block Breaker: Apa yang Berubah
 
-![alt text](Image/TampilanAwal.png)
-![alt text](Image/TampilanGameOver.png)
+Ini daftar perubahan dari kode awal ke versi akhir (`block_breaker.py`).
 
 ## Ringkasan
 
 | Aspek | Kode awal | Versi akhir |
 |---|---|---|
-| Susunan blok | Grid penuh di setengah layar atas | Berbentuk rumah (atap, dinding, jendela, pintu) |
-| Tampilan blok | Kotak polos putih/hijau | Batu bata merah, retak setelah pukulan pertama |
+| Susunan blok | Grid penuh di setengah layar atas | Rumah dengan atap, dinding, jendela, dan pintu |
+| Tampilan blok | Kotak polos putih atau hijau | Batu bata merah yang retak setelah pukulan pertama |
 | Ketahanan blok | Putih 2 pukulan, hijau 1 pukulan | Semua blok 2 pukulan |
-| Latar | Hitam polos | Langit, matahari, awan, rumput |
-| Layar game over | Tanpa tulisan (layar membeku di frame terakhir) | Tulisan GAME OVER, skor, high score |
+| Latar | Hitam polos | Langit, matahari, awan, dan rumput |
+| Layar game over | Tanpa tulisan, layar membeku di frame terakhir | Tulisan GAME OVER, skor, dan high score |
 | Level dan high score | Tidak ada | Ada |
 
-## 1. Perbaikan bug
+## Bug yang diperbaiki
 
-1. **Reset bola.** Awalnya bola kembali ke pojok kiri bawah. Sekarang bola muncul di tengah dan bergerak ke atas dengan arah kiri atau kanan acak (`Ball.reset`).
-2. **Layar game over tanpa tulisan.** Awalnya layar membeku di frame terakhir tanpa informasi apa pun. Fungsi `gameOver` sekarang menampilkan tulisan dan petunjuk menekan SPACE. Loop-nya juga memakai `clock.tick` agar tidak membebani CPU.
-3. **Menghapus blok saat iterasi.** Awalnya blok dihapus dari list yang sedang di-loop. Sekarang loop memakai salinan list dan berhenti setelah satu blok terkena, jadi bola tidak memantul dua kali sekaligus.
-4. **Bola nyangkut di paddle.** Pantulan paddle hanya terjadi saat bola sedang turun (`yFac > 0`).
-5. **Bola nyangkut di dinding.** Posisi bola dijepit di batas layar saat memantul (`Ball.update`).
-6. **Tabrakan telat satu frame.** `Ball.getRect()` membuat rect dari posisi bola saat ini. Sebelumnya memakai rect dari frame sebelumnya.
-7. **Teks skor dan nyawa telat satu frame.** Teks digambar setelah nilainya diperbarui lewat fungsi baru `drawHud`.
-8. **Pukulan terhitung dua kali.** Setelah kena blok, bola didorong keluar dari blok sebelum memantul.
-9. **Debug dihapus.** `print(lives)` dihilangkan.
+1. **Bola kembali ke pojok.** Setelah nyawa hilang, bola muncul di pojok kiri bawah. Sekarang bola muncul di tengah dan bergerak ke atas, ke kiri atau kanan secara acak (`Ball.reset`).
+2. **Game over tanpa tulisan.** Layar membeku tanpa informasi. `gameOver` kini menampilkan tulisan dan petunjuk menekan SPACE, dan loop-nya memakai `clock.tick` supaya CPU tidak terbebani.
+3. **Blok dihapus saat di-loop.** Kode awal menghapus blok dari list yang sedang diulang. Sekarang loop memakai salinan list dan berhenti setelah satu blok kena, jadi bola tidak memantul dua kali.
+4. **Bola menempel di paddle.** Paddle hanya memantulkan bola yang sedang turun (`yFac > 0`).
+5. **Bola menempel di dinding.** `Ball.update` menjepit posisi bola di batas layar.
+6. **Tabrakan telat satu frame.** `Ball.getRect()` membuat rect dari posisi bola saat ini, bukan dari frame sebelumnya.
+7. **Skor dan nyawa telat satu frame.** Fungsi baru `drawHud` menggambar teks setelah nilainya diperbarui.
+8. **Satu pukulan terhitung dua kali.** Setelah kena blok, bola didorong keluar dari blok sebelum memantul.
+9. **Debug tersisa.** `print(lives)` dihapus.
 
-## 2. Fitur baru
+## Fitur baru
 
-- **Level.** Setelah semua blok hancur, level naik dan kecepatan bola bertambah 1 (maksimal 10). Konstanta: `BASE_BALL_SPEED` dan `MAX_BALL_SPEED`.
-- **High score.** Tersimpan selama program berjalan dan tidak disimpan ke file.
-- **HUD.** Menampilkan Score, High, Level, dan Lives di bagian bawah layar.
+- **Level.** Bola menjadi 1 poin lebih cepat setiap semua blok hancur, sampai batas 10 (`BASE_BALL_SPEED`, `MAX_BALL_SPEED`).
+- **High score.** Nilainya tersimpan selama program jalan. Setelah program ditutup, nilainya hilang.
+- **HUD.** Score, High, Level, dan Lives tampil di bagian bawah layar.
 - **Posisi awal.** Paddle dan bola mulai di tengah layar.
 
-## 3. Batu bata
+## Batu bata
 
-- Semua blok memakai health 200. Pukulan pertama membuat bata retak, pukulan kedua menghancurkannya dan menambah skor 5.
-- `Block.display` menggambar bata dengan tepi gelap dan garis sambungan kecil.
-- `Block.drawCrack` (baru) menggambar garis retakan zig-zag setelah pukulan pertama.
-- Konstanta `WHITE`/`GREEN` untuk jenis blok diganti `BRICK_COLORS`, `MORTAR_COLOR`, dan `CRACK_COLOR`.
+- Semua blok punya health 200. Pukulan pertama membuat bata retak. Pukulan kedua menghancurkannya dan menambah skor 5.
+- `Block.display` menggambar bata dengan tepi gelap dan satu garis sambungan.
+- `Block.drawCrack` (baru) menggambar retakan zig-zag.
+- `BRICK_COLORS`, `MORTAR_COLOR`, dan `CRACK_COLOR` menggantikan warna lama (`WHITE` dan `GREEN`).
 
-## 4. Tema rumah
+## Tema rumah
 
-- **`HOUSE_MAP`** (baru): denah teks (`#` = bata, `.` = kosong) untuk bentuk rumah, berisi 101 blok. Bentuk rumah bisa diubah dengan mengedit denah ini.
-- **`populateBlocks`** ditulis ulang untuk membaca denah, dengan rumah di tengah layar. Tujuh baris teratas diwarnai sebagai atap (`ROOF_COLORS`).
-- **Celah antar blok** diperkecil dari 20 menjadi 4 piksel.
-- **`drawBackground`** (baru): menggambar langit, matahari, awan, dan rumput. Dipakai di game dan di layar game over, yang diberi lapisan gelap transparan.
-- **Warna bola dan paddle** diganti (bola abu gelap, paddle cokelat) agar kontras dengan latar.
+- **`HOUSE_MAP`** (baru) adalah denah teks dengan `#` untuk bata dan `.` untuk kosong. Rumahnya berisi 101 blok. Ubah denah ini untuk mengubah bentuk rumah.
+- **`populateBlocks`** ditulis ulang untuk membaca denah dan menaruh rumah di tengah layar. Tujuh baris teratas menjadi atap (`ROOF_COLORS`).
+- **Celah antar blok** mengecil dari 20 ke 4 piksel.
+- **`drawBackground`** (baru) menggambar langit, matahari, awan, dan rumput. Layar game over memakainya juga, dengan lapisan gelap transparan di atasnya.
+- **Bola dan paddle** berganti warna (abu gelap dan cokelat) agar tampak jelas di latar baru.
 
 ## Fungsi dan class
 
 | Nama | Status |
 |---|---|
-| `Striker` | Pengubahan kecil (hanya gambar paddle) |
-| `Block` | Diubah (health, tampilan bata) + `drawCrack` baru |
-| `Ball` | Diubah (`reset`, `update`, `getRect`) |
-| `populateBlocks` | Ditulis ulang (bentuk rumah) |
+| `Striker` | Berubah sedikit (hanya cara menggambar) |
+| `Block` | Berubah (health, tampilan bata), plus `drawCrack` baru |
+| `Ball` | Berubah (`reset`, `update`, `getRect`) |
+| `populateBlocks` | Ditulis ulang untuk bentuk rumah |
 | `drawBackground` | Baru |
 | `drawHud` | Baru |
-| `gameOver` | Diubah (menampilkan layar, menerima skor) |
-| `main` | Diubah (level, high score, urutan gambar) |
+| `gameOver` | Berubah (menampilkan layar, menerima skor) |
+| `main` | Berubah (level, high score, urutan menggambar) |
 
 ## Catatan
 
-- Bola dan paddle bisa lewat di celah jendela dan pintu rumah.
-- Setiap naik level, rumah yang sama muncul lagi dengan bola lebih cepat.
-- Tampilan sudah diperiksa lewat render satu frame, tapi gameplay penuh belum diuji di lingkungan pengembangan ini.
+- Bola dan paddle bisa lewat di celah jendela dan pintu.
+- Setiap naik level, rumah yang sama muncul lagi dengan bola yang lebih cepat.
+- Aku sudah memeriksa tampilan lewat satu frame hasil render. Gameplay penuh belum aku uji.
