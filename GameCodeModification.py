@@ -61,3 +61,37 @@ FPS = 30
 BASE_BALL_SPEED = 5   # kecepatan bola di level 1
 MAX_BALL_SPEED = 10   # batas kecepatan agar game tetap bisa dimainkan
 
+
+# Class Striker (paddle yang digerakkan pemain)
+class Striker:
+    def __init__(self, posx, posy, width, height, speed, color):
+        self.posx, self.posy = posx, posy
+        self.width, self.height = width, height
+        self.speed = speed
+        self.color = color
+
+        # Rect dipakai untuk posisi dan deteksi tabrakan
+        self.strikerRect = pygame.Rect(
+            self.posx, self.posy, self.width, self.height)
+
+    # Menggambar paddle di layar
+    def display(self):
+        pygame.draw.rect(screen, self.color, self.strikerRect)
+
+    # Memperbarui posisi paddle berdasarkan arah (xFac: -1 kiri, 1 kanan, 0 diam)
+    def update(self, xFac):
+        self.posx += self.speed * xFac
+
+        # Menjaga paddle tetap di dalam layar
+        if self.posx <= 0:
+            self.posx = 0
+        elif self.posx + self.width >= WIDTH:
+            self.posx = WIDTH - self.width
+
+        self.strikerRect = pygame.Rect(
+            self.posx, self.posy, self.width, self.height)
+
+    # Mengembalikan rect paddle untuk cek tabrakan
+    def getRect(self):
+        return self.strikerRect
+
