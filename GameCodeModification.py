@@ -150,3 +150,59 @@ class Block:
     # Mengembalikan health blok saat ini
     def getHealth(self):
         return self.health
+
+
+# Class Ball (bola yang memantul)
+class Ball:
+    def __init__(self, posx, posy, radius, speed, color):
+        self.posx, self.posy = posx, posy
+        self.radius = radius
+        self.speed = speed
+        self.color = color
+        self.xFac, self.yFac = 1, 1
+
+    # Menggambar bola di layar
+    def display(self):
+        pygame.draw.circle(
+            screen, self.color, (self.posx, self.posy), self.radius)
+
+    # Memperbarui posisi bola dan memantulkannya dari dinding
+    def update(self):
+        self.posx += self.xFac * self.speed
+        self.posy += self.yFac * self.speed
+
+        # PERBAIKAN BUG: posisi dijepit agar bola tidak nyangkut di dinding
+        if self.posx <= 0:
+            self.posx = 0
+            self.xFac = 1
+        elif self.posx >= WIDTH:
+            self.posx = WIDTH
+            self.xFac = -1
+
+        # Memantul dari sisi atas layar
+        if self.posy <= 0:
+            self.posy = 0
+            self.yFac = 1
+
+        # Mengembalikan True jika bola jatuh melewati sisi bawah
+        if self.posy >= HEIGHT:
+            return True
+
+        return False
+
+    # PERBAIKAN BUG: reset bola ke tengah di atas paddle (sebelumnya ke pojok kiri bawah)
+    def reset(self):
+        self.posx = WIDTH // 2
+        self.posy = HEIGHT - 150
+        self.xFac = random.choice([-1, 1])  # arah kiri/kanan acak
+        self.yFac = -1                      # selalu mulai bergerak ke atas
+
+    # Membalik arah bola pada sumbu Y
+    def hit(self):
+        self.yFac *= -1
+
+    # PERBAIKAN BUG: rect dibuat baru dari posisi saat ini
+    # (sebelumnya memakai rect dari frame sebelumnya)
+    def getRect(self):
+        return pygame.Rect(self.posx - self.radius, self.posy - self.radius,
+                           self.radius * 2, self.radius * 2)
